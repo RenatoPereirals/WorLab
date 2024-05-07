@@ -20,7 +20,7 @@ public WordApplication(IWordService wordService,IExternalWordService externalWor
 ```csharp
 public async Task<bool> InsertWordAsync(string word)
 ```
-- **Descrição**: Insere uma nova palavra após validá-la localmente e verificar sua validade com um serviço externo.
+- **Descrição**: Insere uma nova palavra após validá-la localmente e verificar sua validade com um serviço externo. Classifica a palavra com base em seu contexto, fonética e tipo gramatical.
 
 - **Parâmetro**:
   - `word`: A palavra a ser inserida.
