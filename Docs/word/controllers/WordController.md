@@ -33,7 +33,7 @@ public async Task<IActionResult> InsertWord(string word)
   - `409 Conflict` se a palavra já existir no repositório.
 
 - **Tratamento de erros**:
-  - **Validação Local**: Valida se `word` é uma string alfanumérica sem caracteres especiais. Se `word` for inválida, retorna `400 Bad Request`.
+  - **Validação Local**: Valida se `word` é uma string sem caracteres especiais e números. Se `word` for inválida, retorna `400 Bad Request`.
   - **Serviço Externo**: Consulta um serviço externo para verificar se `word` é válida. Se a palavra não passar na validação do serviço externo, retorna `400 Bad Request`.
   - **Exceções**: Qualquer exceção resultará em `500 Internal Server Error`.
 
