@@ -17,6 +17,11 @@ Bem-vindo ao WordLab, seu parceiro para o aprendizado de vocabulário em inglês
 - O WordLab adota técnicas comprovadas de estudos sobre aprendizado de idiomas para otimizar a memorização.
 - Entre as técnicas estão a repetição espaçada e a prática ativa, auxiliando você a reter as palavras de maneira mais eficaz.
 
+## Documentação Técnica
+
+Para mais detalhes técnicos sobre o projeto, consulte a [documentação](./index.md).
+
+
 ## Recursos do Aplicativo
 
 ### Registro de Palavras
