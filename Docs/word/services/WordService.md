@@ -1,71 +1,78 @@
 ### **WordService**
 
-A `WordService` é responsável por lidar com entidades de domínio relacionadas a palavras. Ela contém regras de negócio, validações e operações específicas para manipular palavras.
+O `WordService` é responsável por lidar com regras de negócio relacionadas à categorização de palavras, como similaridade de pronúncia, contexto e tipos gramaticais. Os métodos dentro dessa classe verificam as palavras de acordo com os critérios especificados e atribuem categorias corretamente.
 
 #### **Construtor**
 
 ```csharp
-public WordService(IWordRepository wordRepository)
+public WordService(IPhoneticService phoneticService, IContextualService contextualService, IGrammaticalService grammaticalService)
 ```
-- **Descrição**: Inicializa uma nova instância da `WordService` com o repositório fornecido.
+- **Descrição**: Inicializa uma nova instância de `WordService` com os serviços necessários para verificar fonemas, contexto e tipos gramaticais.
 
-- **Parâmetro**:
-  - `wordRepository`: Repositório de palavras usado pela `WordService` para operações de persistência.
+- **Parâmetros**:
+  - `phoneticService`: Serviço responsável por verificar similaridades de pronúncia.
+  - `contextualService`: Serviço responsável por verificar contextos específicos para a palavra.
+  - `grammaticalService`: Serviço responsável por verificar tipos gramaticais da palavra.
 
 ### **Métodos**
 
-#### **`AddWord`**:
+#### **`ClassifyWordAsync`**:
 
 ```csharp
-public void AddWord(Word word)
+public async Task<ClassifiedWord> ClassifyWordAsync(Word word)
 ```
-- **Descrição**: Adiciona uma nova palavra ao repositório, após validar suas propriedades.
+- **Descrição**: Classifica a palavra em várias categorias, como similaridade de pronúncia, contexto e tipos gramaticais.
 
 - **Parâmetro**:
-  - `word`: A palavra a ser adicionada.
+  - `word`: A palavra a ser classificada.
+
+- **Retorna**: Um objeto `ClassifiedWord` que contém as categorias atribuídas à palavra.
 
 - **Tratamento de erros**:
-  - **Validação**: Verifica se `word` atende às regras de negócio (por exemplo, não contém caracteres especiais). Se `word` for inválida, lança uma exceção `ArgumentException`.
-  - **Duplicação**: Verifica se `word` já existe no repositório. Se já existir, lança uma exceção `InvalidOperationException`.
+  - **Validação**: Verifica se `word` atende aos critérios de validação. Se `word` for inválida, lança uma exceção `ArgumentException`.
+  - **Exceções**: Outras exceções resultam em lançamentos específicos para erros de categorização.
 
-#### **`GetWordById`**:
+### **`ClassifyByPhoneticSimilarityAsync`**:
 
 ```csharp
-public Word GetWordById(int id)
+public async Task<List<Word>> ClassifyByPhoneticSimilarityAsync(Word word)
 ```
-- **Descrição**: Recupera uma palavra específica pelo seu identificador.
+- **Descrição**: Classifica a palavra com base em similaridade de pronúncia com outras palavras.
 
 - **Parâmetro**:
-  - `id`: O identificador da palavra a ser recuperada.
+  - `word`: A palavra a ser classificada.
 
-- **Retorna**: A palavra encontrada, ou `null` se não for encontrada.
+- **Retorna**: Uma lista de palavras que têm similaridade de pronúncia com `word`.
 
 - **Tratamento de erros**:
-  - **Não encontrada**: Se a palavra não for encontrada, lança uma exceção `KeyNotFoundException`.
+  - **Exceções**: Outras exceções resultam em lançamentos específicos para erros de classificação fonética.
 
-#### **`UpdateWord`**:
+### **`ClassifyByContextAsync`**:
 
 ```csharp
-public void UpdateWord(Word word)
+public async Task<List<string>> ClassifyByContextAsync(Word word)
 ```
-- **Descrição**: Atualiza uma palavra existente com base nas novas informações fornecidas.
+- **Descrição**: Classifica a palavra com base em seu contexto (por exemplo, partes do corpo, países, cores).
 
 - **Parâmetro**:
-  - `word`: O objeto `Word` contendo as informações atualizadas.
+  - `word`: A palavra a ser classificada.
+
+- **Retorna**: Uma lista de contextos aos quais a palavra pertence.
 
 - **Tratamento de erros**:
-  - **Não encontrada**: Se `word` não existir, lança uma exceção `KeyNotFoundException`.
-  - **Validação**: Verifica se as novas informações de `word` são válidas. Se não forem, lança uma exceção `ArgumentException`.
+  - **Exceções**: Outras exceções resultam em lançamentos específicos para erros de classificação por contexto.
 
-#### **`DeleteWord`**:
+### **`ClassifyByGrammaticalTypeAsync`**:
 
 ```csharp
-public void DeleteWord(int id)
+public async Task<List<string>> ClassifyByGrammaticalTypeAsync(Word word)
 ```
-- **Descrição**: Exclui uma palavra específica pelo seu identificador.
+- **Descrição**: Classifica a palavra com base em seus tipos gramaticais (por exemplo, verbo, substantivo, adjetivo).
 
 - **Parâmetro**:
-  - `id`: O identificador da palavra a ser excluída.
+  - `word`: A palavra a ser classificada.
+
+- **Retorna**: Uma lista de tipos gramaticais aos quais a palavra pertence.
 
 - **Tratamento de erros**:
-  - **Não encontrada**: Se a palavra não for encontrada, lança uma exceção `KeyNotFoundException`.
+  - **Exceções**: Outras exceções resultam em lançamentos específicos para erros de classificação gramatical.
