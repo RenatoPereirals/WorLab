@@ -74,8 +74,8 @@ Essa estrutura de projeto garante que os usuários possam explorar as diferentes
 
 ## Documentação Geral
 
-- [Arquitetura](./general/architecture.md)
-- [Configuração Inicial](./general/setup.md)
+- [Arquitetura](./general/Architecture.md)
+- [Configuração Inicial](..general/setup.md)
 - [Diretrizes de Desenvolvimento](./general/guidelines.md)
 
 ---
