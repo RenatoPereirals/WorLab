@@ -8,18 +8,30 @@ Bem-vindo ao WordLab, seu parceiro para o aprendizado de vocabulário em inglês
 
 ### Flexibilidade na Inserção de Palavras
 
-- No WordLab, você tem total controle sobre as palavras que deseja aprender.
-- Insira novas palavras conforme as encontra em seu cotidiano, como em filmes, séries, músicas ou livros.
-- Por exemplo, ao ouvir uma música, você pode adicionar uma palavra nova ao seu vocabulário, como "rhythm" ou "melody".
+O WordLab permite que você insira novas palavras conforme as encontra em seu cotidiano. Ao ouvir uma música ou assistir a uma série ou filme, você pode adicionar uma palavra nova ao seu vocabulário, como "rhythm" ou "melody".
+
+Esta abordagem personalizada torna o aprendizado mais relevante e motivador, pois você tem controle total sobre as palavras que deseja aprender. O WordLab também classifica automaticamente as palavras inseridas com base em contexto, similaridade de pronúncia ou tipos gramaticais, facilitando o aprendizado.
 
 ### Métodos de Memorização Baseados em Estudos
 
-- O WordLab adota técnicas comprovadas de estudos sobre aprendizado de idiomas para otimizar a memorização.
-- Entre as técnicas estão a repetição espaçada e a prática ativa, auxiliando você a reter as palavras de maneira mais eficaz.
+O WordLab adota técnicas comprovadas para otimizar a memorização de palavras. Entre as técnicas utilizadas estão:
+
+- **Repetição Espaçada**: Reforce seu vocabulário revisando palavras em intervalos estrategicamente planejados, promovendo a retenção de longo prazo.
+
+- **Prática Ativa**: Aplique palavras em diferentes contextos e situações para consolidar o aprendizado.
+
+- **Aprendizado por Contexto**: Melhore seu entendimento ao associar palavras a contextos específicos, como partes do corpo, cores ou países. Isso ajuda você a ver as palavras em relação ao seu uso na vida real.
+
+- **Pronúncia**: Facilite a memorização ao associar palavras com pronúncias similares, como "notification" e "pronunciation." Isso ajuda você a reconhecer padrões fonéticos e a melhorar sua pronúncia.
+
+- **Tipos Gramaticais**: Aprenda palavras de grupos gramaticais semelhantes, como substantivos ou verbos, para construir um conhecimento mais estruturado da língua.
+
+Esses métodos auxiliam você a reter as palavras de maneira mais eficaz, tornando o aprendizado mais produtivo e gratificante. A classificação das palavras com base em características comuns facilita a memorização, pois permite que você aprenda grupos de palavras relacionadas, tornando o aprendizado mais intuitivo e eficiente.
+
 
 ## Documentação Técnica
 
-Para mais detalhes técnicos sobre o projeto, consulte a [documentação](./index.md).
+Para mais detalhes técnicos sobre o projeto, consulte a [documentação](./Docs/index.md).
 
 
 ## Recursos do Aplicativo
