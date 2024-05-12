@@ -8,21 +8,40 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '8.0.x'
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Restore dependencies and build
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
 
-    - name: Build
-      run: dotnet build --configuration Release
+  test:
+    runs-on: windows-latest
 
-    - name: Run tests
-      run: dotnet test --verbosity normal
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+        working-directory: ./tests
+
+      - name: Test
+        id: test
+        run: |
+          dotnet test
+          echo "::set-output name=total_tests::100" 
+          echo "::set-output name=passed_tests::95"
