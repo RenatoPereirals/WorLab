@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{26F64840-796
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordLab.API", "src\WordLab.API\WordLab.API.csproj", "{ECD554BA-F0B1-464C-93B1-370274013254}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "test\test.csproj", "{37C931EE-EF6B-4E63-A171-31A64B62C594}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{ECD554BA-F0B1-464C-93B1-370274013254}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ECD554BA-F0B1-464C-93B1-370274013254}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ECD554BA-F0B1-464C-93B1-370274013254}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37C931EE-EF6B-4E63-A171-31A64B62C594}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37C931EE-EF6B-4E63-A171-31A64B62C594}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37C931EE-EF6B-4E63-A171-31A64B62C594}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37C931EE-EF6B-4E63-A171-31A64B62C594}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{ECD554BA-F0B1-464C-93B1-370274013254} = {26F64840-7969-4A67-8F33-5911EA3F2FD9}
