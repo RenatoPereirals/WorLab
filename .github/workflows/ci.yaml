@@ -37,7 +37,7 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore
-        working-directory: ./tests
+        working-directory: ./test
 
       - name: Test
         id: test
