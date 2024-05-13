@@ -43,5 +43,5 @@ jobs:
         id: test
         run: |
           dotnet test
-          echo "::set-output name=total_tests::100" 
-          echo "::set-output name=passed_tests::95"
+          echo "total_tests=100" >> $GITHUB_ENV
+          echo "passed_tests=95" >> $GITHUB_ENV
