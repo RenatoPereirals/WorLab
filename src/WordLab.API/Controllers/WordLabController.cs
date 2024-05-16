@@ -5,13 +5,13 @@ namespace WordLab.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AddWord(IWordApplication wordApplication,
-                                   ILogger<AddWord> logger) : ControllerBase
+    public class WordLabController(IWordApplication wordApplication,
+                                   ILogger<WordLabController> logger) : ControllerBase
     {
         private readonly IWordApplication _wordApplication = wordApplication ?? throw new ArgumentNullException(nameof(wordApplication));
 
         [HttpPost]
-        public async Task<IActionResult> InsertionWord([FromBody] string word)
+        public async Task<IActionResult> AddWord([FromBody] string word)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace WordLab.API.Controllers
 
                 if (isInserted)
                 {
-                    return CreatedAtAction(nameof(InsertionWord), new { word }, null);
+                    return CreatedAtAction(nameof(AddWord), new { word });
                 }
                 else
                 {
