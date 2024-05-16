@@ -5,7 +5,8 @@ namespace WordLab.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WordLabController(IWordApplication wordApplication) : ControllerBase
+    public class WordLabController(IWordApplication wordApplication,
+                                   ILogger<WordLabController> logger) : ControllerBase
     {
         private readonly IWordApplication _wordApplication = wordApplication ?? throw new ArgumentNullException(nameof(wordApplication));
 
@@ -32,8 +33,8 @@ namespace WordLab.API.Controllers
             }
             catch (Exception ex)
             {
-                // Log ex
-                return StatusCode(500, $"Ocorreu um erro interno. Por favor, tente novamente mais tarde. {ex.Message}");
+                logger.LogError(ex, "Erro ao inserir palavra.");
+                return StatusCode(500, "Ocorreu um erro interno. Por favor, tente novamente mais tarde.");
             }
         }
     }
