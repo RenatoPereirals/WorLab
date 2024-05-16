@@ -12,11 +12,20 @@ namespace WordLab.API.Controllers
         [HttpPost]
         public async Task<IActionResult> InsertionWord(string word)
         {
-            var result = await _wordApplication.AddWord(word);
-            if (result)
-                return StatusCode(201);
+            try
+            {
+                var isInserted = await _wordApplication.AddWord(word);
 
-            return StatusCode(400);
+                if (isInserted)
+                    return StatusCode(201);
+
+                return StatusCode(400);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
         }
     }
 }
