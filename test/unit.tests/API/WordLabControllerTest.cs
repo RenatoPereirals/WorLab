@@ -2,16 +2,19 @@ using Moq;
 using Microsoft.AspNetCore.Mvc;
 using WordLab.API.Controllers;
 using WordLab.API.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace test.unit.tests.API
 {
     public class WordLabControllerTest
     {
         private readonly Mock<IWordApplication> _mockWordApplication;
+        private readonly Mock<ILogger<AddWord>> _mockLogger;
 
         public WordLabControllerTest()
         {
             _mockWordApplication = new Mock<IWordApplication>();
+            _mockLogger = new Mock<ILogger<AddWord>>();
         }
 
         [Fact]
@@ -22,7 +25,7 @@ namespace test.unit.tests.API
             _mockWordApplication.Setup(res => res.AddWord(expectedWord)).ReturnsAsync(true);
 
             // Act
-            var wordController = new WordLabController(_mockWordApplication.Object);
+            var wordController = new AddWord(_mockWordApplication.Object, _mockLogger.Object);
             var result = await wordController.InsertionWord(expectedWord);
 
             // Assert
@@ -34,7 +37,7 @@ namespace test.unit.tests.API
         public async Task InsertionWord_ReturnsBadRequest_WhenWordInsertedIsNullOrEmpty()
         {
             // Arrange
-            var wordController = new WordLabController(_mockWordApplication.Object);
+            var wordController = new AddWord(_mockWordApplication.Object, _mockLogger.Object);
             string? nullWord = null;
             string emptyWord = "";
 
@@ -58,7 +61,7 @@ namespace test.unit.tests.API
             _mockWordApplication.Setup(res => res.AddWord(expectedWord)).ReturnsAsync(false);
 
             // Act
-            var wordController = new WordLabController(_mockWordApplication.Object);
+            var wordController = new AddWord(_mockWordApplication.Object, _mockLogger.Object);
             var result = await wordController.InsertionWord(expectedWord);
 
             // Assert
@@ -71,17 +74,19 @@ namespace test.unit.tests.API
         {
             // Arrange
             var expectedWord = "test";
+            var expectedExceptionMessage = "Erro ao inserir a palavra";
             _mockWordApplication.Setup(res => res.AddWord(It.IsAny<string>()))
-                                .ThrowsAsync(new InvalidOperationException("Erro ao inserir a palavra"));
+                                .ThrowsAsync(new InvalidOperationException(expectedExceptionMessage));
 
             // Act
-            var wordController = new WordLabController(_mockWordApplication.Object);
+            var wordController = new AddWord(_mockWordApplication.Object, _mockLogger.Object);
             var result = await wordController.InsertionWord(expectedWord);
 
             // Assert
             var statusCodeResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(500, statusCodeResult.StatusCode);
-            Assert.Equal("Ocorreu um erro interno. Por favor, tente novamente mais tarde. Erro ao inserir a palavra", statusCodeResult.Value);
+            Assert.Equal($"Ocorreu um erro interno. Por favor, tente novamente mais tarde. {expectedExceptionMessage}", statusCodeResult.Value);
         }
+
     }
 }
