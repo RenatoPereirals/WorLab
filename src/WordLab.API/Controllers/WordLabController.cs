@@ -7,10 +7,10 @@ namespace WordLab.API.Controllers
     [Route("api/[controller]")]
     public class WordLabController(IWordApplication wordApplication) : ControllerBase
     {
-        private readonly IWordApplication _wordApplication = wordApplication ?? throw new ArgumentException(null, nameof(wordApplication));
+        private readonly IWordApplication _wordApplication = wordApplication ?? throw new ArgumentNullException(nameof(wordApplication));
 
         [HttpPost]
-        public async Task<IActionResult> InsertionWord(string word)
+        public async Task<IActionResult> InsertionWord([FromBody] string word)
         {
             try
             {
@@ -22,13 +22,18 @@ namespace WordLab.API.Controllers
                 var isInserted = await _wordApplication.AddWord(word);
 
                 if (isInserted)
-                    return StatusCode(201);
-
-                return StatusCode(400);
+                {
+                    return CreatedAtAction(nameof(InsertionWord), new { word }, null);
+                }
+                else
+                {
+                    return BadRequest("Falha ao inserir a palavra.");
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                // Log ex
+                return StatusCode(500, $"Ocorreu um erro interno. Por favor, tente novamente mais tarde. {ex.Message}");
             }
         }
     }
