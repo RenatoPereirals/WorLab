@@ -7,13 +7,18 @@ namespace WordLab.API.Controllers
     [Route("api/[controller]")]
     public class WordLabController(IWordApplication wordApplication) : ControllerBase
     {
-        private readonly IWordApplication _wordApplication = wordApplication;
+        private readonly IWordApplication _wordApplication = wordApplication ?? throw new ArgumentException(null, nameof(wordApplication));
 
         [HttpPost]
         public async Task<IActionResult> InsertionWord(string word)
         {
             try
             {
+                if (string.IsNullOrEmpty(word))
+                {
+                    return BadRequest("A palavra não pode ser nula ou vazia.");
+                }
+
                 var isInserted = await _wordApplication.AddWord(word);
 
                 if (isInserted)
@@ -25,7 +30,6 @@ namespace WordLab.API.Controllers
             {
                 return StatusCode(500);
             }
-
         }
     }
 }
