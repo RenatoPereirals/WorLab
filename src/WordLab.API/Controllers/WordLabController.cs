@@ -11,7 +11,7 @@ namespace WordLab.API.Controllers
         private readonly IWordApplication _wordApplication = wordApplication ?? throw new ArgumentNullException(nameof(wordApplication));
 
         [HttpPost]
-        public async Task<IActionResult> AddWord([FromBody] string word)
+        public async Task<IActionResult> Post([FromBody] string word)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace WordLab.API.Controllers
 
                 if (isInserted)
                 {
-                    return CreatedAtAction(nameof(AddWord), new { word });
+                    return CreatedAtAction(nameof(Post), new { word });
                 }
                 else
                 {
