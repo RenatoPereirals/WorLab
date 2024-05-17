@@ -18,7 +18,7 @@ namespace test.unit.tests.API
         }
 
         [Fact]
-        public async Task AddWord_ReturnsSuccessWithStatusCode201_WhenWordInserted()
+        public async Task Post_ReturnsSuccessWithStatusCode201_WhenWordInserted()
         {
             // Arrange
             var expectedWord = "test";
@@ -26,7 +26,7 @@ namespace test.unit.tests.API
 
             // Act
             var wordController = new WordLabController(_mockWordApplication.Object, _mockLogger.Object);
-            var result = await wordController.AddWord(expectedWord);
+            var result = await wordController.Post(expectedWord);
 
             // Assert
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
@@ -34,7 +34,7 @@ namespace test.unit.tests.API
         }
 
         [Fact]
-        public async Task AddWord_ReturnsBadRequest_WhenWordInsertedIsNullOrEmpty()
+        public async Task Post_ReturnsBadRequest_WhenWordInsertedIsNullOrEmpty()
         {
             // Arrange
             var wordController = new WordLabController(_mockWordApplication.Object, _mockLogger.Object);
@@ -42,8 +42,8 @@ namespace test.unit.tests.API
             string emptyWord = "";
 
             // Act
-            var resultForNullWord = await wordController.AddWord(nullWord!) as BadRequestObjectResult;
-            var resultForEmptyWord = await wordController.AddWord(emptyWord) as BadRequestObjectResult;
+            var resultForNullWord = await wordController.Post(nullWord!) as BadRequestObjectResult;
+            var resultForEmptyWord = await wordController.Post(emptyWord) as BadRequestObjectResult;
 
             // Assert
             Assert.NotNull(resultForNullWord);
@@ -54,7 +54,7 @@ namespace test.unit.tests.API
         }
 
         [Fact]
-        public async Task AddWord_ReturnsBadRequest_WhenWordNotInserted()
+        public async Task Post_ReturnsBadRequest_WhenWordNotInserted()
         {
             // Arrange
             var expectedWord = "t35t";
@@ -62,7 +62,7 @@ namespace test.unit.tests.API
 
             // Act
             var wordController = new WordLabController(_mockWordApplication.Object, _mockLogger.Object);
-            var result = await wordController.AddWord(expectedWord);
+            var result = await wordController.Post(expectedWord);
 
             // Assert
             var badRequestObjectResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -70,7 +70,7 @@ namespace test.unit.tests.API
         }
 
         [Fact]
-        public async Task AddWord_ReturnsInternalServerError_WhenExceptionOccurs()
+        public async Task Post_ReturnsInternalServerError_WhenExceptionOccurs()
         {
             // Arrange
             var expectedWord = "test";
@@ -80,7 +80,7 @@ namespace test.unit.tests.API
 
             // Act
             var wordController = new WordLabController(_mockWordApplication.Object, _mockLogger.Object);
-            var result = await wordController.AddWord(expectedWord);
+            var result = await wordController.Post(expectedWord);
 
             // Assert
             var statusCodeResult = Assert.IsType<ObjectResult>(result);
