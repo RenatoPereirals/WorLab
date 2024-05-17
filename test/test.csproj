@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\src\WordLab.API\WordLab.API.csproj" />
+    <ProjectReference Include="..\src\WordLab.Application\WordLab.Application.csproj" />
   </ItemGroup>
 
 </Project>
