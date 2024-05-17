@@ -57,31 +57,31 @@ As visões de arquitetura do projeto WordLab abordam diferentes aspectos do sist
 
 ### **WordLab.API**
 
-Esta camada lida com as interações com os usuários, recebendo solicitações e retornando respostas apropriadas. Ela orquestra a comunicação com a camada de aplicação.
+Esta camada atuará como a interface com o usuário ou sistema cliente. Ela conterá os endpoints que receberão as requisições HTTP e responderão a elas. É a camada mais externa e lida diretamente com as solicitações e respostas da web.
 
 ### **WordLab.Application**
 
-A camada de aplicação atua como um ponto de coordenação entre a camada de controle (API) e a camada de domínio. Ela é responsável por processos de autenticação e permissão, além de lidar com serviços externos. Ela também encapsula os dados utilizando DTOs para transporte seguro e eficiente entre as camadas.
+Esta camada servirá como um mediador entre a camada de API e as camadas de domínio e serviços externos. Ela conterá a lógica de aplicação e coordenará as operações entre as camadas de domínio e infraestrutura/serviços externos.
 
 ### **WordLab.Domain**
 
-A camada de domínio abriga as classes de domínio que representam as entidades principais da aplicação (`Word`, `PhoneticWord`, `ContextualWord`, `GrammaticalWord`), suas interfaces para garantir o desacoplamento e a aplicação do Princípio de Inversão de Dependência (DIP), e as regras de negócio do projeto.
+Esta camada conterá a lógica de negócios e as entidades do domínio. Ela define as regras de negócio e as operações que podem ser realizadas no sistema.
 
 ### **WordLab.Infrastructure**
 
-Esta camada lida com a infraestrutura do projeto, como a persistência de dados e interações com o banco de dados, utilizando repositórios (`WordPersistence`) para gerenciar operações de armazenamento e recuperação de dados relacionados a palavras.
+Esta camada lidará com todos os aspectos da persistência de dados, como acesso ao banco de dados, repositórios, etc. Ela fornecerá os meios para que as outras camadas interajam com o banco de dados.
 
 ### **WordLab.ExternalService**
 
-A camada de serviços externos gerencia a interação com APIs de terceiros para verificações ortográficas, de pronúncia e recuperação de palavras. Ela facilita a integração com outros serviços, mantendo o sistema modular.
+Esta camada será responsável por integrar e comunicar-se com serviços externos, como APIs de terceiros. Ela abstrairá as chamadas a esses serviços e fornecerá uma interface limpa para a camada de aplicação.
 
 ### **WordLab.ExceptionHandling**
 
-Esta camada é responsável por lidar com o tratamento de exceções de maneira padronizada em todo o sistema, garantindo que as exceções sejam tratadas corretamente e de forma consistente.
+Esta camada será responsável por gerenciar e centralizar o tratamento de exceções em todo o projeto. Isso pode incluir a definição de políticas de exceção personalizadas, manipuladores de exceção e a lógica para decidir quando e como as exceções devem ser registradas ou propagadas.
 
-### **WordLab.Test**
+### **test**
 
-A camada de testes compreende testes de integração, unidade e outros necessários para garantir que cada parte do sistema funcione corretamente e em conjunto.
+A camada de testes colocará todos os testes unitários, testes de integração e possivelmente testes de sistema/end-to-end. Esta camada é crucial para garantir que a aplicação funcione como esperado e para detectar regressões ou problemas antes que eles afetem os usuários finais ou a produção.
 
 ### **Estrutura do Sistema**
 A estrutura atual do sistema WordLab é composta por camadas separadas, cada uma com suas responsabilidades específicas. As camadas incluem a camada de controle, aplicação, domínio, serviços externos, persistência e testes.
