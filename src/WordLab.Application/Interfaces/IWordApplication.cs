@@ -1,4 +1,4 @@
-namespace WordLab.API.Interfaces
+namespace WordLab.Application.Interfaces
 {
     public interface IWordApplication 
     {
