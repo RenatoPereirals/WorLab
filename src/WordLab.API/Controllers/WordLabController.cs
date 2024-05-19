@@ -15,7 +15,7 @@ namespace WordLab.API.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(word))
+                if (string.IsNullOrWhiteSpace(word))
                 {
                     return BadRequest("A palavra não pode ser nula ou vazia.");
                 }
@@ -34,7 +34,7 @@ namespace WordLab.API.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex, "Erro ao inserir palavra.");
-                return StatusCode(500, $"Ocorreu um erro interno. Por favor, tente novamente mais tarde. {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Ocorreu um erro interno. Por favor, tente novamente mais tarde.");
             }
         }
     }
