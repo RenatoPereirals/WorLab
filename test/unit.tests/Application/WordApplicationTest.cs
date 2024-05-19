@@ -10,6 +10,7 @@ namespace test.unit.tests.Application
         private readonly Mock<IWordValidator> _mockWordValidator;
         private readonly Mock<IWordRepository> _mockWordRepository;
         private readonly Mock<IWordService> _mockWordService;
+        private readonly Mock<IWordPersistence> _mockWordPersistence;
         private readonly WordApplication _application;
 
         public WordApplicationTest()
@@ -18,12 +19,15 @@ namespace test.unit.tests.Application
             _mockWordValidator = new Mock<IWordValidator>();
             _mockWordRepository = new Mock<IWordRepository>();
             _mockWordService = new Mock<IWordService>();
+            _mockWordService = new Mock<IWordService>();
+            _mockWordPersistence = new Mock<IWordPersistence>();
 
             _application = new WordApplication(
                 _mockSpellCheck.Object,
                 _mockWordValidator.Object,
                 _mockWordRepository.Object,
-                _mockWordService.Object
+                _mockWordService.Object,
+                _mockWordPersistence.Object
             );
         }
 
@@ -71,6 +75,20 @@ namespace test.unit.tests.Application
         }
 
         [Fact]
+        public async Task AddWordAsync_ReturnsFalse_WhenWordExists()
+        {
+            // Arrange
+            var existingWord = "test";
+            SetupMocksForWordExists(existingWord);
+
+            // Act
+            var result = await _application.AddWordAsync(existingWord);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
         public async Task AddWordAsync_ReturnsException_WhenClassifyWordAsyncThrowsException()
         {
             // Arrange
@@ -97,6 +115,11 @@ namespace test.unit.tests.Application
         {
             _mockSpellCheck.Setup(service => service.VerifySpellingAsync(word)).ReturnsAsync(false);
             _mockWordValidator.Setup(validator => validator.IsValidWord(word)).ReturnsAsync(false);
+        }
+
+        private void SetupMocksForWordExists(string word)
+        {
+            _mockWordPersistence.Setup(validator => validator.GetWordByWord(word)).ReturnsAsync(false);
         }
     }
 }
