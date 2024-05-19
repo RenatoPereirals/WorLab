@@ -1,8 +1,8 @@
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using WordLab.API.Controllers;
-using WordLab.API.Interfaces;
 using Microsoft.Extensions.Logging;
+using WordLab.Application.Interfaces;
 
 namespace test.unit.tests.API
 {

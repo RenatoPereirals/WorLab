@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using WordLab.API.Interfaces;
+using WordLab.Application.Interfaces;
 
 namespace WordLab.API.Controllers
 {
