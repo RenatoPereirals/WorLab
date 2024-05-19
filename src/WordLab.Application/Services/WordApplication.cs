@@ -1,12 +1,14 @@
+using System.Net.WebSockets;
 using WordLab.Application.Interfaces;
+using WordLab.Domain.Entity;
+using WordLab.Domain.Interfaces;
 
 namespace WordLab.Application.Services
 {
     public class WordApplication(ISpellCheckService spellCheck,
                                  IWordValidator wordValidator,
                                  IWordRepository wordRepository,
-                                 IWordService wordService,
-                                 IWordPersistence wordPersistence)
+                                 IWordService wordService)
     {
         private readonly ISpellCheckService _spellCheck = spellCheck ??
             throw new ArgumentNullException(nameof(spellCheck));
@@ -20,9 +22,6 @@ namespace WordLab.Application.Services
         private readonly IWordService _wordService = wordService ??
             throw new ArgumentNullException(nameof(wordService));
 
-        private readonly IWordPersistence _wordPersistence = wordPersistence ??
-            throw new ArgumentNullException(nameof(wordPersistence));
-
         public async Task<bool> AddWordAsync(string word)
         {
             if (string.IsNullOrWhiteSpace(word))
@@ -31,13 +30,16 @@ namespace WordLab.Application.Services
             if (!await _spellCheck.VerifySpellingAsync(word) && !await _wordValidator.IsValidWord(word))
                 return false;
 
-            if (await WordExists(word))
-                return false;
 
             try
             {
-                var WordClassified = await _wordService.ClassifyWordAsync(word);
-                return await _wordRepository.AddAsync(WordClassified);
+                if (await WordExists(word))
+                    return false;
+
+                ClassifiedWord WordClassified = await _wordService.ClassifyWordAsync(word);
+                var asd = await _wordRepository.AddAsync(WordClassified);
+
+                return asd;
             }
             catch (Exception ex)
             {
@@ -48,7 +50,20 @@ namespace WordLab.Application.Services
 
         public async Task<bool> WordExists(string word)
         {
-            return await _wordPersistence.GetWordByWord(word);
+            try
+            {
+                Word wordName = await _wordRepository.GetWordByWord(word);
+
+                if (wordName.Name.Equals(word, StringComparison.CurrentCultureIgnoreCase))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception)
+            {
+                // Log de error
+                throw new Exception($"Erro ao tentar buscar a palara {word}");
+            }
         }
     }
 }
