@@ -27,6 +27,16 @@ namespace test.unit.tests.Application
             );
         }
 
+        [Theory]
+        [InlineData(null)]
+        [InlineData("     ")]
+        public async Task AddWordAsync_ThrowsArgumentException_WhenWordIsNullOrWhiteSpace(string word)
+        {
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _application.AddWordAsync(word));
+            Assert.Contains("A palavra não pode ser nula ou conter espaços vazios.", exception.Message);
+        }
+
         [Fact]
         public async Task AddWordAsync_ReturnsTrue_WhenWordIsValidAndAddedSuccessfully()
         {
