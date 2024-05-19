@@ -1,6 +1,8 @@
 using Moq;
 using WordLab.Application.Interfaces;
 using WordLab.Application.Services;
+using WordLab.Domain.Entity;
+using WordLab.Domain.Interfaces;
 
 namespace test.unit.tests.Application
 {
@@ -10,7 +12,6 @@ namespace test.unit.tests.Application
         private readonly Mock<IWordValidator> _mockWordValidator;
         private readonly Mock<IWordRepository> _mockWordRepository;
         private readonly Mock<IWordService> _mockWordService;
-        private readonly Mock<IWordPersistence> _mockWordPersistence;
         private readonly WordApplication _application;
 
         public WordApplicationTest()
@@ -20,14 +21,12 @@ namespace test.unit.tests.Application
             _mockWordRepository = new Mock<IWordRepository>();
             _mockWordService = new Mock<IWordService>();
             _mockWordService = new Mock<IWordService>();
-            _mockWordPersistence = new Mock<IWordPersistence>();
 
             _application = new WordApplication(
                 _mockSpellCheck.Object,
                 _mockWordValidator.Object,
                 _mockWordRepository.Object,
-                _mockWordService.Object,
-                _mockWordPersistence.Object
+                _mockWordService.Object
             );
         }
 
@@ -42,20 +41,37 @@ namespace test.unit.tests.Application
         }
 
         [Fact]
-        public async Task AddWordAsync_ReturnsTrue_WhenWordIsValidAndAddedSuccessfully()
+        public async Task AddWordAsync_ReturnsTrue_WhenWordIsValidAndDoesNotExist()
         {
             // Arrange
-            var validWord = "test";
-            var classifiedWord = "classifiedTest";
+            var validWord = "word";
+            ClassifiedWord classifiedWord = new();
             SetupMocksForValidWord(validWord, classifiedWord);
 
+            _mockWordRepository.Setup(repo => repo.GetWordByWord(It.IsAny<string>()))
+                               .ReturnsAsync(new Word { Name = "differentWord" });
             // Act
-            var result = await _application.AddWordAsync(validWord);
+            bool result = await _application.AddWordAsync(validWord);
 
             // Assert
             Assert.True(result);
-            _mockWordService.Verify(service => service.ClassifyWordAsync(It.Is<string>(w => w == validWord)), Times.Once);
-            _mockWordRepository.Verify(repo => repo.AddAsync(It.Is<string>(w => w == classifiedWord)), Times.Once);
+        }
+
+        [Fact]
+        public async Task AddWordAsync_ReturnsFalse_WhenWordIsValidAndExist()
+        {
+            // Arrange
+            var validWord = "word";
+            ClassifiedWord classifiedWord = new();
+            SetupMocksForValidWord(validWord, classifiedWord);
+
+            _mockWordRepository.Setup(repo => repo.GetWordByWord(It.IsAny<string>()))
+                               .ReturnsAsync(new Word { Name = "word" });
+            // Act
+            bool result = await _application.AddWordAsync(validWord);
+
+            // Assert
+            Assert.False(result);
         }
 
         [Fact]
@@ -71,7 +87,6 @@ namespace test.unit.tests.Application
             // Assert
             Assert.False(result);
             _mockWordService.Verify(service => service.ClassifyWordAsync(It.IsAny<string>()), Times.Never);
-            _mockWordRepository.Verify(repo => repo.AddAsync(It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
@@ -92,34 +107,48 @@ namespace test.unit.tests.Application
         public async Task AddWordAsync_ReturnsException_WhenClassifyWordAsyncThrowsException()
         {
             // Arrange
-            var validWord = "test";
-            var classifiedWord = "classifiedTest";
+            var validWord = "word";
+            var classifiedWord = new ClassifiedWord();
             SetupMocksForValidWord(validWord, classifiedWord);
             _mockWordService.Setup(service => service.ClassifyWordAsync(It.IsAny<string>()))
-                            .ThrowsAsync(new Exception("Erro ao classificar a palavra"));
+                            .ThrowsAsync(new ApplicationException("Erro ao classificar a palavra"));
+
+            _mockWordRepository.Setup(repo => repo.GetWordByWord(It.IsAny<string>()))
+                               .ReturnsAsync(new Word { Name = "differentWord" });
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ApplicationException>(() => _application.AddWordAsync(validWord));
             Assert.Equal("Erro ao classificar a palavra.", exception.Message);
         }
 
-        private void SetupMocksForValidWord(string word, string classifiedWord)
+        private void SetupMocksForValidWord(string word, ClassifiedWord classifiedWord)
         {
-            _mockSpellCheck.Setup(service => service.VerifySpellingAsync(word)).ReturnsAsync(true);
-            _mockWordValidator.Setup(validator => validator.IsValidWord(word)).ReturnsAsync(true);
-            _mockWordService.Setup(service => service.ClassifyWordAsync(word)).ReturnsAsync(classifiedWord);
-            _mockWordRepository.Setup(repo => repo.AddAsync(classifiedWord)).ReturnsAsync(true);
+            var newWord = new ClassifiedWord();
+            _mockSpellCheck.Setup(service => service.VerifySpellingAsync(word))
+                                                    .ReturnsAsync(true);
+
+            _mockWordValidator.Setup(validator => validator.IsValidWord(word))
+                                                           .ReturnsAsync(true);
+
+            _mockWordService.Setup(service => service.ClassifyWordAsync(word))
+                                                     .Returns(Task.FromResult(newWord));
+
+            _mockWordRepository.Setup(repo => repo.AddAsync(It.IsAny<ClassifiedWord>()))
+                                                  .ReturnsAsync(true);
         }
 
         private void SetupMocksForInvalidWord(string word)
         {
             _mockSpellCheck.Setup(service => service.VerifySpellingAsync(word)).ReturnsAsync(false);
             _mockWordValidator.Setup(validator => validator.IsValidWord(word)).ReturnsAsync(false);
+            _mockWordRepository.Setup(repo => repo.GetWordByWord(It.IsAny<string>()))
+                                                  .ReturnsAsync(new Word());
         }
 
         private void SetupMocksForWordExists(string word)
         {
-            _mockWordPersistence.Setup(validator => validator.GetWordByWord(word)).ReturnsAsync(false);
+            var newWord = new Word();
+            _mockWordRepository.Setup(validator => validator.GetWordByWord(word)).Returns(Task.FromResult(newWord));
         }
     }
 }
