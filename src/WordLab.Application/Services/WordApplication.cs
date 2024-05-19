@@ -18,19 +18,23 @@ namespace WordLab.Application.Services
 
         public async Task<bool> AddWordAsync(string word)
         {
+            if (string.IsNullOrWhiteSpace(word))
+            {
+                throw new ArgumentException("A palavra não pode ser nula ou conter espaços vazios.", nameof(word));
+            }
+
+            if (!await _spellCheck.VerifySpellingAsync(word) && !await _wordValidator.IsValidWord(word))
+                return false;
+
             try
             {
-                if (!await _spellCheck.VerifySpellingAsync(word) && !await _wordValidator.IsValidWord(word))
-                    return false;
-
                 var WordClassified = await _wordService.ClassifyWordAsync(word);
-
                 return await _wordRepository.AddAsync(WordClassified);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                return false;
+                // Log the exception (logging not shown here)
+                throw new ApplicationException("Erro ao classificar a palavra.", ex);
             }
         }
     }
