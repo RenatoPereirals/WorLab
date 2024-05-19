@@ -61,19 +61,18 @@ namespace test.unit.tests.Application
         }
 
         [Fact]
-        public async Task AddWordAsync_ReturnsFalse_WhenClassifyWordAsyncThrowsException()
+        public async Task AddWordAsync_ReturnsException_WhenClassifyWordAsyncThrowsException()
         {
             // Arrange
             var validWord = "test";
             var classifiedWord = "classifiedTest";
             SetupMocksForValidWord(validWord, classifiedWord);
-            _mockWordService.Setup(service => service.ClassifyWordAsync(It.IsAny<string>())).ThrowsAsync(new Exception("Erro ao classificar a palavra"));
+            _mockWordService.Setup(service => service.ClassifyWordAsync(It.IsAny<string>()))
+                            .ThrowsAsync(new Exception("Erro ao classificar a palavra"));
 
-            // Act
-            var result = await _application.AddWordAsync(validWord);
-
-            // Assert
-            Assert.False(result);
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ApplicationException>(() => _application.AddWordAsync(validWord));
+            Assert.Equal("Erro ao classificar a palavra.", exception.Message);
         }
 
         private void SetupMocksForValidWord(string word, string classifiedWord)
