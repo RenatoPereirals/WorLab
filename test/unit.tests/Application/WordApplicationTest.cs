@@ -45,8 +45,7 @@ namespace test.unit.tests.Application
         {
             // Arrange
             var validWord = "word";
-            ClassifiedWord classifiedWord = new();
-            SetupMocksForValidWord(validWord, classifiedWord);
+            SetupMocksForValidWord(validWord);
 
             _mockWordRepository.Setup(repo => repo.GetWordByWord(It.IsAny<string>()))
                                .ReturnsAsync(new Word { Name = "differentWord" });
@@ -62,8 +61,7 @@ namespace test.unit.tests.Application
         {
             // Arrange
             var validWord = "word";
-            ClassifiedWord classifiedWord = new();
-            SetupMocksForValidWord(validWord, classifiedWord);
+            SetupMocksForValidWord(validWord);
 
             _mockWordRepository.Setup(repo => repo.GetWordByWord(It.IsAny<string>()))
                                .ReturnsAsync(new Word { Name = "word" });
@@ -108,8 +106,7 @@ namespace test.unit.tests.Application
         {
             // Arrange
             var validWord = "word";
-            var classifiedWord = new ClassifiedWord();
-            SetupMocksForValidWord(validWord, classifiedWord);
+            SetupMocksForValidWord(validWord);
             _mockWordService.Setup(service => service.ClassifyWordAsync(It.IsAny<string>()))
                             .ThrowsAsync(new ApplicationException("Erro ao classificar a palavra"));
 
@@ -121,7 +118,7 @@ namespace test.unit.tests.Application
             Assert.Equal("Erro ao classificar a palavra.", exception.Message);
         }
 
-        private void SetupMocksForValidWord(string word, ClassifiedWord classifiedWord)
+        private void SetupMocksForValidWord(string word)
         {
             var newWord = new ClassifiedWord();
             _mockSpellCheck.Setup(service => service.VerifySpellingAsync(word))
