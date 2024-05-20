@@ -1,4 +1,3 @@
-using System.Net.WebSockets;
 using WordLab.Application.Interfaces;
 using WordLab.Domain.Entity;
 using WordLab.Domain.Interfaces;
@@ -30,16 +29,13 @@ namespace WordLab.Application.Services
             if (!await _spellCheck.VerifySpellingAsync(word) && !await _wordValidator.IsValidWord(word))
                 return false;
 
-
             try
             {
                 if (await WordExists(word))
                     return false;
 
-                ClassifiedWord WordClassified = await _wordService.ClassifyWordAsync(word);
-                var asd = await _wordRepository.AddAsync(WordClassified);
-
-                return asd;
+                ClassifiedWord classifiedWord = await _wordService.ClassifyWordAsync(word);
+                return await _wordRepository.AddAsync(classifiedWord);
             }
             catch (Exception ex)
             {
