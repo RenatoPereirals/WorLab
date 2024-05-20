@@ -1,4 +1,4 @@
-namespace WordLab.Application.Interfaces
+namespace WordLab.Domain.Interfaces
 {
     public interface ISpellCheckService
     {
