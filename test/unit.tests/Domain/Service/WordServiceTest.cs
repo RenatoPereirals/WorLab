@@ -21,12 +21,7 @@ namespace test.unit.tests.Domain.Service
         {
             // Arrange
             var word = "test";
-            var expectedWord = new Word();
-            var expectedPhoneticSimilarity = new PhoneticSimilarity();
-            var expectedContext = new Context();
-            var expectedGrammaticalType = new GrammaticalType();
-
-            _mockWordRepository.Setup(repo => repo.GetWordByWord(word)).ReturnsAsync(expectedWord);
+            SetupMockRepositoryWithWord(word);
 
             // Act
             var result = await _wordService.ClassifyWordAsync(word);
@@ -34,6 +29,12 @@ namespace test.unit.tests.Domain.Service
             // Assert
             Assert.NotNull(result);
             Assert.IsType<ClassifiedWord>(result);
+        }
+
+        private void SetupMockRepositoryWithWord(string word)
+        {
+            var expectedWord = new Word();
+            _mockWordRepository.Setup(repo => repo.GetWordByWord(word)).ReturnsAsync(expectedWord);
         }
     }
 }
