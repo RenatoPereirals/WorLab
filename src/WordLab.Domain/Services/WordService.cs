@@ -6,37 +6,32 @@ namespace WordLab.Domain.Services
     public class WordService(IWordRepository wordRepository) : IWordService
     {
         private readonly IWordRepository _wordRepository = wordRepository ??
-            throw new ArgumentException(nameof(wordRepository));
-            
+            throw new ArgumentNullException(nameof(wordRepository));
+
         public async Task<ClassifiedWord> ClassifyWordAsync(string word)
         {
-            Word objectWord = await _wordRepository.GetWordByWord(word);
-
-            PhoneticSimilarity phoneticSimilarity = WordPhoneticSimilarity(objectWord);
-            Context context = WordContext(objectWord);
-            GrammaticalType grammaticalType = WordGrammaticalType(objectWord);
-
-            return new ClassifiedWord()
+            var objectWord = await _wordRepository.GetWordByWord(word);
+            return new ClassifiedWord
             {
-                PhoneticsSimilarities = phoneticSimilarity,
-                Contexts = context,
-                GrammaticalsTypes = grammaticalType
+                PhoneticsSimilarities = CreatePhoneticSimilarity(objectWord),
+                Contexts = CreateContext(objectWord),
+                GrammaticalsTypes = CreateGrammaticalType(objectWord)
             };
         }
 
-        public PhoneticSimilarity WordPhoneticSimilarity(Word word)
+        private static PhoneticSimilarity CreatePhoneticSimilarity(Word word)
         {
             return new PhoneticSimilarity();
         }
 
-        public Context WordContext(Word word)
+        private static Context CreateContext(Word word)
         {
             return new Context();
         }
 
-        public GrammaticalType WordGrammaticalType(Word word)
+        private static GrammaticalType CreateGrammaticalType(Word word)
         {
-           return new GrammaticalType();
+            return new GrammaticalType();
         }
     }
 }
