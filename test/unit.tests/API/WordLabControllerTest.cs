@@ -49,6 +49,20 @@ namespace test.unit.tests.API
         }
 
         [Fact]
+        public async Task Post_ReturnsConflictObjectResult_WhenWordExists()
+        {
+            // Arrange
+            var wordExists = "test";
+            _mockWordApplication.Setup(app => app.WordExists(wordExists)).ReturnsAsync(true);
+            var result = await _wordController.Post(wordExists);
+
+            // Assert
+            var badRequestResult = Assert.IsType<ConflictObjectResult>(result);
+            Assert.Equal(409, badRequestResult.StatusCode);
+            Assert.Equal($"A palavra {wordExists} já existe.", badRequestResult.Value);
+        }
+
+        [Fact]
         public async Task Post_ReturnsBadRequestObjectResult_WhenWordIsNotInserted()
         {
             // Arrange
