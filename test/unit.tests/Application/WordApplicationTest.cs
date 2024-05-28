@@ -1,5 +1,4 @@
 using Moq;
-using WordLab.Application.Interfaces;
 using WordLab.Application.Services;
 using WordLab.Domain.Entity;
 using WordLab.Domain.Interfaces;
@@ -12,7 +11,7 @@ namespace test.unit.tests.Application
         private readonly Mock<IWordValidator> _mockWordValidator;
         private readonly Mock<IWordRepository> _mockWordRepository;
         private readonly Mock<IWordService> _mockWordService;
-        private readonly WordApplication _application;
+        private readonly WordApplication _wordApplication;
 
         public WordApplicationTest()
         {
@@ -22,7 +21,7 @@ namespace test.unit.tests.Application
             _mockWordService = new Mock<IWordService>();
             _mockWordService = new Mock<IWordService>();
 
-            _application = new WordApplication(
+            _wordApplication = new WordApplication(
                 _mockSpellCheck.Object,
                 _mockWordValidator.Object,
                 _mockWordRepository.Object,
@@ -36,7 +35,7 @@ namespace test.unit.tests.Application
         public async Task AddWordAsync_ThrowsArgumentException_WhenWordIsNullOrWhiteSpace(string word)
         {
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _application.AddWordAsync(word));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(() => _wordApplication.AddWordAsync(word));
             Assert.Contains("A palavra não pode ser nula ou conter espaços vazios.", exception.Message);
         }
 
@@ -50,7 +49,7 @@ namespace test.unit.tests.Application
             _mockWordRepository.Setup(repo => repo.GetWordByWord(It.IsAny<string>()))
                                .ReturnsAsync(new Word { Name = "differentWord" });
             // Act
-            bool result = await _application.AddWordAsync(validWord);
+            bool result = await _wordApplication.AddWordAsync(validWord);
 
             // Assert
             Assert.True(result);
@@ -66,7 +65,7 @@ namespace test.unit.tests.Application
             _mockWordRepository.Setup(repo => repo.GetWordByWord(It.IsAny<string>()))
                                .ReturnsAsync(new Word { Name = "word" });
             // Act
-            bool result = await _application.AddWordAsync(validWord);
+            bool result = await _wordApplication.AddWordAsync(validWord);
 
             // Assert
             Assert.False(result);
@@ -80,7 +79,7 @@ namespace test.unit.tests.Application
             SetupMocksForInvalidWord(invalidWord);
 
             // Act
-            var result = await _application.AddWordAsync(invalidWord);
+            var result = await _wordApplication.AddWordAsync(invalidWord);
 
             // Assert
             Assert.False(result);
@@ -95,7 +94,7 @@ namespace test.unit.tests.Application
             SetupMocksForWordExists(existingWord);
 
             // Act
-            var result = await _application.AddWordAsync(existingWord);
+            var result = await _wordApplication.AddWordAsync(existingWord);
 
             // Assert
             Assert.False(result);
@@ -114,8 +113,62 @@ namespace test.unit.tests.Application
                                .ReturnsAsync(new Word { Name = "differentWord" });
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ApplicationException>(() => _application.AddWordAsync(validWord));
+            var exception = await Assert.ThrowsAsync<ApplicationException>(() => _wordApplication.AddWordAsync(validWord));
             Assert.Equal("Erro ao classificar a palavra.", exception.Message);
+        }
+
+        [Fact]
+        public async Task WordExists_ShouldThrowArgumentNullException_WhenWordIsNullOrEmpty()
+        {
+            // Arrange
+            string? word = null;
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => _wordApplication.WordExists(word!));
+            Assert.Equal("word", exception.ParamName);
+        }
+
+        [Fact]
+        public async Task WordExists_ShouldReturnTrue_WhenWordExists()
+        {
+            // Arrange
+            string word = "example";
+            _mockWordRepository.Setup(repo => repo.GetWordByWord(word))
+                               .ReturnsAsync(new Word { Name = word });
+
+            // Act
+            bool result = await _wordApplication.WordExists(word);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task WordExists_ShouldReturnFalse_WhenWordNotExists()
+        {
+            // Arrange
+            string word = "example";
+            _mockWordRepository.Setup(repo => repo.GetWordByWord(It.IsAny<string>()))
+                               .ReturnsAsync(new Word());
+
+            // Act
+            bool result = await _wordApplication.WordExists(word);
+
+            // Assert
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task WordExists_ShouldThrowException_WhenRepositoryThrowsException()
+        {
+            // Arrange
+            string word = "example";
+            _mockWordRepository.Setup(repo => repo.GetWordByWord(word))
+                               .ThrowsAsync(new Exception("Erro interno, por favor tente novamente."));
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<Exception>(() => _wordApplication.WordExists(word));
+            Assert.Equal("Erro interno, por favor tente novamente.", exception.Message);
         }
 
         private void SetupMocksForValidWord(string word)
