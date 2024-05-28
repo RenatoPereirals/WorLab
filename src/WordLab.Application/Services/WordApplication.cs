@@ -47,6 +47,9 @@ namespace WordLab.Application.Services
         {
             try
             {
+                if (string.IsNullOrEmpty(word))
+                    throw new ArgumentNullException(nameof(word), "Palavra não pode ser nula ou vazia.");
+
                 Word wordName = await _wordRepository.GetWordByWord(word);
 
                 if (wordName.Name.Equals(word, StringComparison.CurrentCultureIgnoreCase))
@@ -57,7 +60,7 @@ namespace WordLab.Application.Services
             catch (Exception)
             {
                 // Log de error
-                throw new Exception($"Erro ao tentar buscar a palara {word}");
+                throw;
             }
         }
     }
