@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WordLab.Application.Interfaces;
+using WordLab.Domain.Interfaces;
 
 namespace WordLab.API.Controllers
 {
@@ -16,17 +17,20 @@ namespace WordLab.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post([FromBody] string word)
+        public async Task<IActionResult> Post(string word)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(word))
                     return BadRequest("A palavra não pode ser nula ou vazia.");
 
+                if (await _wordApplication.WordExists(word))
+                    return Conflict($"A palavra {word} já existe.");
+
                 var isInserted = await _wordApplication.AddWord(word);
 
                 if (isInserted)
-                    return CreatedAtAction(nameof(Post), new { word });
+                    return CreatedAtAction(nameof(Post), new { word }, word);
                 else
                     return BadRequest("Falha ao inserir a palavra.");
 
