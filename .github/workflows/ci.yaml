@@ -11,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.1.4
+        uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4.0.0
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
 
@@ -28,20 +28,20 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.1.4
+        uses: actions/checkout@v4
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v4.0.0
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore
         working-directory: ./test
+        run: dotnet restore
 
       - name: Test
         id: test
         run: |
           dotnet test
-          echo "total_tests=100" >> $GITHUB_ENV
-          echo "passed_tests=95" >> $GITHUB_ENV
+          echo "total_tests=100" | tee -a $GITHUB_ENV
+          echo "passed_tests=95" | tee -a $GITHUB_ENV
