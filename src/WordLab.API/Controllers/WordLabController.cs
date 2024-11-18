@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WordLab.Application.Interfaces;
+using WordLab.Application.Models;
 using WordLab.Domain.Interfaces;
 
 namespace WordLab.API.Controllers
@@ -17,29 +18,30 @@ namespace WordLab.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Post(string word)
+        public async Task<IActionResult> Post([FromBody] WordModel model)
         {
             try
             {
+                var word = model.Word;
                 if (string.IsNullOrWhiteSpace(word))
-                    return BadRequest("A palavra não pode ser nula ou vazia.");
+                    return BadRequest("The word cannot be null or contain empty spaces.");
 
                 if (await _wordApplication.WordExists(word))
-                    return Conflict($"A palavra {word} já existe.");
+                    return Conflict($"The word {word} already exists.");
 
                 var isInserted = await _wordApplication.AddWord(word);
 
                 if (isInserted)
                     return CreatedAtAction(nameof(Post), new { word }, word);
                 else
-                    return BadRequest("Falha ao inserir a palavra.");
+                    return BadRequest("Error inserting the word");
 
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao inserir palavra");
+                _logger.LogError(ex, "Error inserting the word.");
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                                  $"Ocorreu um erro interno. Por favor, tente novamente mais tarde.");
+                                  "An internal error occurred. Please try again later.");
             }
         }
     }
