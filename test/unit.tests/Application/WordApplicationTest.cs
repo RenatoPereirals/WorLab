@@ -36,7 +36,7 @@ namespace test.unit.tests.Application
         {
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ArgumentException>(() => _wordApplication.AddWordAsync(word ?? string.Empty));
-            Assert.Contains("A palavra não pode ser nula ou conter espaços vazios.", exception.Message);
+            Assert.Contains("The word cannot be null or contain empty spaces.", exception.Message);
         }
 
         [Fact]
@@ -107,14 +107,14 @@ namespace test.unit.tests.Application
             var validWord = "word";
             SetupMocksForValidWord(validWord);
             _mockWordService.Setup(service => service.ClassifyWordAsync(It.IsAny<string>()))
-                            .ThrowsAsync(new ApplicationException("Erro ao classificar a palavra"));
+                            .ThrowsAsync(new ApplicationException("Error classifying the word."));
 
             _mockWordRepository.Setup(repo => repo.GetWordByWord(It.IsAny<string>()))
                                .ReturnsAsync(new Word { Name = "differentWord" });
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<ApplicationException>(() => _wordApplication.AddWordAsync(validWord));
-            Assert.Equal("Erro ao classificar a palavra.", exception.Message);
+            Assert.Equal("Error classifying the word.", exception.Message);
         }
 
         [Fact]
@@ -124,7 +124,7 @@ namespace test.unit.tests.Application
             string? word = null;
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => _wordApplication.WordExists(word!));
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => _wordApplication.WordExists(word ?? string.Empty));
             Assert.Equal("word", exception.ParamName);
         }
 
@@ -164,11 +164,11 @@ namespace test.unit.tests.Application
             // Arrange
             string word = "example";
             _mockWordRepository.Setup(repo => repo.GetWordByWord(word))
-                               .ThrowsAsync(new Exception("Erro interno, por favor tente novamente."));
+                               .ThrowsAsync(new Exception("An internal error occurred, please try again later."));
 
             // Act & Assert
             var exception = await Assert.ThrowsAsync<Exception>(() => _wordApplication.WordExists(word));
-            Assert.Equal("Erro interno, por favor tente novamente.", exception.Message);
+            Assert.Equal("An internal error occurred, please try again later.", exception.Message);
         }
 
         private void SetupMocksForValidWord(string word)
