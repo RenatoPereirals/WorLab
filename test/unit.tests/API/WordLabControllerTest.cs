@@ -3,20 +3,21 @@ using Microsoft.AspNetCore.Mvc;
 using WordLab.API.Controllers;
 using Microsoft.Extensions.Logging;
 using WordLab.Application.Interfaces;
+using WordLab.Application.Models;
 
-namespace test.unit.tests.API
+namespace Test.Unit.Tests.API
 {
     public class WordLabControllerTest
     {
-        private readonly Mock<IWordApplication> _mockWordApplication;
+        private readonly Mock<IWordApplication> _wordApplicationMock;
         private readonly Mock<ILogger<WordLabController>> _mockLogger;
         private readonly WordLabController _wordController;
 
         public WordLabControllerTest()
         {
-            _mockWordApplication = new Mock<IWordApplication>();
+            _wordApplicationMock = new Mock<IWordApplication>();
             _mockLogger = new Mock<ILogger<WordLabController>>();
-            _wordController = new WordLabController(_mockWordApplication.Object, _mockLogger.Object);
+            _wordController = new WordLabController(_wordApplicationMock.Object, _mockLogger.Object);
         }
 
         [Fact]
@@ -24,10 +25,12 @@ namespace test.unit.tests.API
         {
             // Arrange
             var validWord = "test";
-            SetupMocksForSuccessfulInsertion(validWord);
+            var word = new WordModel { Word = validWord };
+
+            SetupMockForSuccessfulInsertion(validWord);
 
             // Act
-            var result = await _wordController.Post(validWord);
+            var result = await _wordController.Post(word);
 
             // Assert
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
@@ -37,15 +40,16 @@ namespace test.unit.tests.API
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public async Task Post_ReturnsBadRequestObjectResult_WhenWordIsNullOrWhiteSpace(string? word)
+        public async Task Post_ReturnsBadRequestObjectResult_WhenWordIsNullOrWhiteSpace(string? invalidWord)
         {
             // Act
-            var result = await _wordController.Post(word ?? string.Empty);
+            var word = new WordModel { Word = invalidWord ?? string.Empty };
+            var result = await _wordController.Post(word);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal(400, badRequestResult.StatusCode);
-            Assert.Equal("A palavra não pode ser nula ou vazia.", badRequestResult.Value);
+            Assert.Equal("The word cannot be null or contain empty spaces.", badRequestResult.Value);
         }
 
         [Fact]
@@ -53,24 +57,29 @@ namespace test.unit.tests.API
         {
             // Arrange
             var wordExists = "test";
-            _mockWordApplication.Setup(app => app.WordExists(wordExists)).ReturnsAsync(true);
-            var result = await _wordController.Post(wordExists);
+            var word = new WordModel { Word = wordExists};
+
+            _wordApplicationMock.Setup(app => app.WordExists(wordExists)).ReturnsAsync(true);
+            var result = await _wordController.Post(word);
 
             // Assert
             var badRequestResult = Assert.IsType<ConflictObjectResult>(result);
             Assert.Equal(409, badRequestResult.StatusCode);
-            Assert.Equal($"A palavra {wordExists} já existe.", badRequestResult.Value);
+            Assert.Equal($"The word {wordExists} already exists.", badRequestResult.Value);
         }
 
         [Fact]
         public async Task Post_ReturnsBadRequestObjectResult_WhenWordIsNotInserted()
         {
             // Arrange
+            
             var invalidWord = "t35t";
-            SetupMocksForFailedInsertion(invalidWord);
+            var word = new WordModel { Word = invalidWord };
+
+            SetupMockForFailedInsertion(invalidWord);
 
             // Act
-            var result = await _wordController.Post(invalidWord);
+            var result = await _wordController.Post(word);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
@@ -82,29 +91,31 @@ namespace test.unit.tests.API
         {
             // Arrange
             var wordWithException = "test";
-            SetupMocksForException(wordWithException, "Erro ao inserir a palavra");
+            var word = new WordModel { Word = wordWithException };
+
+            SetupMockForException(wordWithException, "Error inserting the word.");
 
             // Act
-            var result = await _wordController.Post(wordWithException);
+            var result = await _wordController.Post(word);
 
             // Assert
             var objectResult = Assert.IsType<ObjectResult>(result);
             Assert.Equal(500, objectResult.StatusCode);
         }
 
-        private void SetupMocksForSuccessfulInsertion(string word)
+        private void SetupMockForSuccessfulInsertion(string word)
         {
-            _mockWordApplication.Setup(service => service.AddWord(word)).ReturnsAsync(true);
+            _wordApplicationMock.Setup(service => service.AddWord(word)).ReturnsAsync(true);
         }
 
-        private void SetupMocksForFailedInsertion(string word)
+        private void SetupMockForFailedInsertion(string word)
         {
-            _mockWordApplication.Setup(service => service.AddWord(word)).ReturnsAsync(false);
+            _wordApplicationMock.Setup(service => service.AddWord(word)).ReturnsAsync(false);
         }
 
-        private void SetupMocksForException(string word, string exceptionMessage)
+        private void SetupMockForException(string word, string exceptionMessage)
         {
-            _mockWordApplication.Setup(service => service.AddWord(word))
+            _wordApplicationMock.Setup(service => service.AddWord(word))
                                 .ThrowsAsync(new InvalidOperationException(exceptionMessage));
         }
     }
