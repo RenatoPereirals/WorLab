@@ -37,10 +37,10 @@ namespace test.unit.tests.API
         [Theory]
         [InlineData(null)]
         [InlineData("")]
-        public async Task Post_ReturnsBadRequestObjectResult_WhenWordIsNullOrWhiteSpace(string word)
+        public async Task Post_ReturnsBadRequestObjectResult_WhenWordIsNullOrWhiteSpace(string? word)
         {
             // Act
-            var result = await _wordController.Post(word);
+            var result = await _wordController.Post(word ?? string.Empty);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
